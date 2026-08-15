@@ -21,7 +21,7 @@ async function requestJson(path, options = {}) {
 
   if (!response.ok) {
     const errorMessage = data?.error || data?.message || response.statusText || "Request failed";
-    const error = new Error(errorMessage);
+    const error = new Error(errorMessage) as Error & { status?: number };
     error.status = response.status;
     throw error;
   }
@@ -77,7 +77,7 @@ export async function getOffers(): Promise<Offer[]> {
 
 export function listenToMenuItems(
   callback: (items: any[]) => void,
-  pollIntervalMs = 5000
+  pollIntervalMs = 60000
 ) {
   let active = true;
   let timer: number | undefined;
@@ -109,7 +109,7 @@ export function listenToMenuItems(
 /** Continuously polls the tables list so the customer app detects admin-freed tables in real-time. */
 export function listenToTables(
   callback: (tables: any[]) => void,
-  pollIntervalMs = 4000
+  pollIntervalMs = 30000
 ) {
   let active = true;
   let timer: number | undefined;
@@ -140,7 +140,7 @@ export function listenToTables(
 
 export function listenToCategories(
   callback: (categories: any[]) => void,
-  pollIntervalMs = 2000
+  pollIntervalMs = 60000
 ) {
   let active = true;
   let timer: number | undefined;
@@ -171,7 +171,7 @@ export function listenToCategories(
 
 export function listenToOffers(
   callback: (offers: Offer[]) => void,
-  pollIntervalMs = 5000
+  pollIntervalMs = 60000
 ) {
   let active = true;
   let timer: number | undefined;

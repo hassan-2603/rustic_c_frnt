@@ -15,7 +15,7 @@ import {
   getMenuPriceLabel,
   Offer
 } from '../types';
-import { getTables, createOrder, listenToSessionOrders, requestBill, callWaiter, listenToOffers, getMenuItems, getCategories, listenToMenuItems, listenToCategories, listenToTables } from '../services/customerApi';
+import { getTables, createOrder, listenToSessionOrders, requestBill, callWaiter, getMenuItems, getCategories, listenToTables } from '../services/customerApi';
 import OffersSection from "../components/OffersSection";
 import { TRANSLATIONS } from '../data/translations';
 import Logo from '../components/Logo';
@@ -72,11 +72,6 @@ export default function CustomerApp() {
       categoryScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
-
-  useEffect(() => {
-    const unsubscribe = listenToOffers(setOffers);
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     console.log("CURRENT TABLE STATE:", currentTable);
@@ -291,21 +286,6 @@ export default function CustomerApp() {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = listenToMenuItems((items) => {
-      setMenuItems(items);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = listenToCategories((cats) => {
-      setCategories(cats);
-    });
-
-    return () => unsubscribe();
-  }, []);
-  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const table = params.get("table");
 
@@ -410,38 +390,17 @@ export default function CustomerApp() {
   // useEffect(() => {
   //   
   // }, []);
-  async function loadMenu() {
-    const items = await getMenuItems();
-
-    console.log("CUSTOMER MENU:", items);
-
-    setMenuItems(items);
-  }
-
-  useEffect(() => {
-    loadMenu();
-  }, []);
-  useEffect(() => {
-    async function loadCategories() {
-      const data = await getCategories();
-
-      console.log("LOADED CATEGORIES:", data);
-
-      setCategories(data);
-    }
-
-    loadCategories();
-  }, []);
-
-  // Re-fetch categories fresh every time the user lands on the menu page
-  // so that any new category created in admin is immediately visible.
+  // Keep the initial fetches to a single load so the app does not hammer the API
+  // on every mount or on a rapid polling loop.
   useEffect(() => {
     if (page !== 'menu') return;
     getCategories().then((data) => {
       if (Array.isArray(data) && data.length > 0) {
         setCategories(data);
       }
-    }).catch(() => {/* silently ignore — poller will retry */ });
+    }).catch(() => {
+      // Ignore transient category fetch errors; the page can still render the cached view.
+    });
   }, [page]);
 
 
