@@ -1,0 +1,179 @@
+import {
+  Eye,
+  Clock,
+  UtensilsCrossed,
+  Receipt,
+} from "lucide-react";
+
+import StatusBadge from "./StatusBadge";
+
+type Props = {
+  order: any;
+  onView: () => void;
+};
+
+export default function OrderCard({
+  order,
+  onView,
+}: Props) {
+  const created =
+    order.createdAt?.toDate?.() ||
+    new Date();
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+
+      <div className="p-6">
+
+        {/* Top */}
+
+        <div className="flex justify-between items-start">
+
+          <div>
+
+            <h2 className="text-xl font-bold text-gray-900">
+              Order #{order.orderNumber}
+            </h2>
+
+            <p className="text-gray-500 mt-1">
+              {order.tableLabel || order.tableReference || `Table ${order.tableNumber || "--"}`}
+            </p>
+            <div className="mt-2 text-sm text-gray-600">
+              <div>{order.customerName || ""}</div>
+              {order.customerPhone ? <div className="text-gray-500">{order.customerPhone}</div> : null}
+            </div>
+
+          </div>
+
+          <StatusBadge status={order.status} />
+
+        </div>
+
+        {/* Middle */}
+
+        <div className="grid grid-cols-3 gap-5 mt-8">
+
+          <div className="flex items-center gap-3">
+
+            <Receipt
+              size={18}
+              className="text-olive"
+            />
+
+            <div>
+
+              <p className="text-xs text-gray-500">
+                Total
+              </p>
+
+              <p className="font-semibold">
+                ₹{order.total}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="flex items-center gap-3">
+
+            <UtensilsCrossed
+              size={18}
+              className="text-olive"
+            />
+
+            <div>
+
+              <p className="text-xs text-gray-500">
+                Items
+              </p>
+
+              <p className="font-semibold">
+                {order.items?.length || 0}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="flex items-center gap-3">
+
+            <Clock
+              size={18}
+              className="text-olive"
+            />
+
+            <div>
+
+              <p className="text-xs text-gray-500">
+                Time
+              </p>
+
+              <p className="font-semibold">
+                {created.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Footer */}
+
+        <div className="mt-8 flex justify-end">
+
+          <button
+            onClick={onView}
+            className="flex items-center gap-2 bg-olive hover:bg-olive/90 text-white px-5 py-3 rounded-xl transition font-semibold"
+          >
+            <Eye size={18} />
+
+            View Details
+
+          </button>
+
+        </div>
+        {/* Payment Method */}
+
+<div className="mt-5">
+  <span className="text-sm font-medium">
+    Payment:
+  </span>
+
+  <span
+    className={`ml-2 px-3 py-1 rounded-full text-xs font-semibold ${
+      order.paymentMethod === "UPI"
+        ? "bg-green-100 text-green-700"
+        : order.paymentMethod === "Card"
+        ? "bg-blue-100 text-blue-700"
+        : order.paymentMethod === "Cash"
+        ? "bg-orange-100 text-orange-700"
+        : "bg-gray-100 text-gray-600"
+    }`}
+  >
+    {order.paymentMethod || "Not Paid"}
+  </span>
+</div>
+
+{/* Footer */}
+
+<div className="mt-8 flex justify-end">
+
+  <button
+    onClick={onView}
+    className="flex items-center gap-2 bg-olive hover:bg-olive/90 text-white px-5 py-3 rounded-xl transition font-semibold"
+  >
+    <Eye size={18} />
+    View Details
+  </button>
+
+</div>
+
+      </div>
+
+    </div>
+  );
+}
