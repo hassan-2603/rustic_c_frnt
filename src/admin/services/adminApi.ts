@@ -1,6 +1,7 @@
 import { auth } from "../../firebase";
 
-const API_BASE = "/api/admin";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://rustic-c-bck.onrender.com").replace(/\/$/, "");
+const API_BASE = `${API_BASE_URL}/api/admin`;
 const LOCAL_BACKEND_ADMIN_TOKEN = "rustic-charm-admin-token";
 
 async function getAdminToken() {
@@ -72,6 +73,10 @@ async function executeAdminRequest(path: string, options: RequestInit = {}) {
     // ignore
   }
 
+  if (API_BASE_URL) {
+    url = `${API_BASE_URL}/api/admin${path}`;
+  }
+
   return fetch(url, {
     ...options,
     headers,
@@ -114,7 +119,13 @@ async function fetchAdminJson(path: string, options: RequestInit = {}) {
     }
   }
 
+  const contentType = response.headers.get("content-type") || "";
   const text = await response.text();
+
+  if (contentType.includes("text/html") || text.trim().startsWith("<!doctype html") || text.trim().startsWith("<html")) {
+    throw new Error(`Admin API returned HTML instead of JSON at ${response.url || `${API_BASE}${path}`}. Check the backend URL or Netlify redirect rules.`);
+  }
+
   const data = text ? JSON.parse(text) : null;
 
   if (!response.ok) {

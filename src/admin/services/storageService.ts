@@ -4,6 +4,8 @@
  */
 import { getStoredAdminToken } from "./adminApi";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://rustic-c-bck.onrender.com").replace(/\/$/, "");
+
 export async function uploadMenuImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("image", file);
@@ -15,7 +17,7 @@ export async function uploadMenuImage(file: File): Promise<string> {
     headers["x-admin-token"] = token;
   }
 
-  let url = "/api/admin/upload-image";
+  let url = `${API_BASE_URL}/api/admin/upload-image`;
   if (token) {
     url += `?adminToken=${encodeURIComponent(token)}`;
   }

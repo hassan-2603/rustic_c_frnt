@@ -1,5 +1,7 @@
 import { requestAdminJson } from "./adminApi";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://rustic-c-bck.onrender.com").replace(/\/$/, "");
+
 // Configuration
 const LANGUAGES = [
   "Russian",
@@ -17,7 +19,7 @@ const BATCH_SIZE = 3; // Number of menu items per backend translation request
  * Translate a batch of menu items through the existing backend endpoint.
  */
 async function translateBatch(items: any[]): Promise<any[]> {
-  const response = await fetch("/api/translate-menu", {
+  const response = await fetch(`${API_BASE_URL}/api/translate-menu`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

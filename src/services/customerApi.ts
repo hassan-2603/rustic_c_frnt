@@ -1,22 +1,36 @@
 import type { Offer } from "../types";
 
-const API_BASE = "/api/customer";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://rustic-c-bck.onrender.com").replace(/\/$/, "");
+const API_BASE = `${API_BASE_URL}/api/customer`;
+
+function resolveApiUrl(path: string) {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_BASE_URL}${path}`;
+}
 
 async function requestJson(path, options = {}) {
-  const response = await fetch(path, {
+  const fullUrl = resolveApiUrl(path);
+  const response = await fetch(fullUrl, {
     headers: {
       "Content-Type": "application/json",
     },
     ...options,
   });
 
+  const contentType = response.headers.get("content-type") || "";
   const text = await response.text();
+
+  if (contentType.includes("text/html") || text.trim().startsWith("<!doctype html") || text.trim().startsWith("<html")) {
+    throw new Error(`API returned HTML instead of JSON at ${fullUrl}. Check the backend URL or Netlify redirect rules.`);
+  }
+
   let data;
 
   try {
     data = text ? JSON.parse(text) : null;
   } catch (err) {
-    throw new Error(`Invalid JSON response from ${path}`);
+    throw new Error(`Invalid JSON response from ${fullUrl}`);
   }
 
   if (!response.ok) {
@@ -35,7 +49,7 @@ export async function getTables() {
 }
 
 export async function getMenuItems() {
-  const result = await requestJson(`/api/menu`, { method: "GET" });
+  const result = await requestJson(`${API_BASE_URL}/api/menu`, { method: "GET" });
   const items = Array.isArray(result) ? result : result.data || [];
   if (items && items.length > 0) {
     try {
@@ -48,7 +62,7 @@ export async function getMenuItems() {
 }
 
 export async function getCategories() {
-  const result = await requestJson(`/api/categories`, { method: "GET" });
+  const result = await requestJson(`${API_BASE_URL}/api/categories`, { method: "GET" });
   return Array.isArray(result) ? result : result.data || [];
 }
 
@@ -71,7 +85,7 @@ export async function getOrderStatus(orderId) {
 }
 
 export async function getOffers(): Promise<Offer[]> {
-  const result = await requestJson("/api/offers", { method: "GET" });
+  const result = await requestJson(`${API_BASE_URL}/api/offers`, { method: "GET" });
   return result || [];
 }
 
