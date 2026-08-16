@@ -58,6 +58,7 @@ export default function CustomerApp() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'All'>('All');
+  const [vegFilter, setVegFilter] = useState<'veg' | 'non-veg' | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tables, setTables] = useState<Table[]>([]);
@@ -710,7 +711,7 @@ export default function CustomerApp() {
 
   const getCategoryString = (val: any): string => {
     if (!val) return "";
-    const localized = getLocalizedField(val, "English");
+    const localized = getLocalizedField(val, language);
     if (localized) return localized;
     if (typeof val === "string") return val;
     return String(val);
@@ -736,7 +737,12 @@ export default function CustomerApp() {
         ing.toLowerCase().includes(query)
       );
 
-    return matchesCategory && matchesSearch;
+    const matchesVegFilter =
+      vegFilter === null ||
+      (vegFilter === 'veg' && item.isVeg) ||
+      (vegFilter === 'non-veg' && !item.isVeg);
+
+    return matchesCategory && matchesSearch && matchesVegFilter;
   });
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -1023,6 +1029,33 @@ export default function CustomerApp() {
                     </div>
                   </div>
 
+                  {/* Veg/Non Veg Filter Buttons */}
+                  <div className="flex gap-3 justify-center mb-6" id="veg-filter-buttons">
+                    <button
+                      onClick={() => setVegFilter(vegFilter === 'veg' ? null : 'veg')}
+                      className={`px-6 py-2.5 rounded-full text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer flex items-center gap-2 border-2 ${
+                        vegFilter === 'veg'
+                          ? 'bg-green-600 text-white border-green-800 shadow-lg font-bold scale-105'
+                          : 'bg-white border-green-700 text-green-700 hover:bg-green-50 hover:shadow-md active:scale-95'
+                      }`}
+                      id="veg-filter-btn"
+                    >
+                      <Leaf size={16} />
+                      <span>Veg</span>
+                    </button>
+                    <button
+                      onClick={() => setVegFilter(vegFilter === 'non-veg' ? null : 'non-veg')}
+                      className={`px-6 py-2.5 rounded-full text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer flex items-center gap-2 border-2 ${
+                        vegFilter === 'non-veg'
+                          ? 'bg-red-600 text-white border-red-800 shadow-lg font-bold scale-105'
+                          : 'bg-white border-red-700 text-red-700 hover:bg-red-50 hover:shadow-md active:scale-95'
+                      }`}
+                      id="non-veg-filter-btn"
+                    >
+                      <span>Non Veg</span>
+                    </button>
+                  </div>
+
                   {/* Food Cards Grid */}
                   <div className="min-h-[400px]" id="food-grid-section">
                     {filteredMenuItems.length === 0 ? (
@@ -1089,7 +1122,7 @@ export default function CustomerApp() {
                                 </div>
 
                                 <p className="text-sm text-gray-500 mt-1">
-                                  {item.category}
+                                  {getCategoryString(item.category)}
                                 </p>
 
                                 <p className="text-sm text-gray-600 mt-2 line-clamp-2">

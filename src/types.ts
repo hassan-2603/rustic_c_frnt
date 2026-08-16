@@ -34,7 +34,6 @@ export type Language =
 export function getLocalizedField(field: any, language: string, fullItem?: any): string {
   if (!field && !fullItem?.translations) return "";
 
-  // Map language display names to their codes
   const langCodeMap: Record<string, string> = {
     Russian: "ru",
     German: "de",
@@ -44,12 +43,18 @@ export function getLocalizedField(field: any, language: string, fullItem?: any):
     Japanese: "ja",
     Korean: "ko",
     English: "en",
-    ru: "ru", de: "de", es: "es", kk: "kk", he: "he", ja: "ja", ko: "ko", en: "en",
+    ru: "ru",
+    de: "de",
+    es: "es",
+    kk: "kk",
+    he: "he",
+    ja: "ja",
+    ko: "ko",
+    en: "en",
   };
 
   const langCode = langCodeMap[language] || null;
 
-  // Check fullItem.translations for the requested language (covers all 7 non-English languages)
   if (langCode && langCode !== "en" && fullItem?.translations?.[langCode]?.name) {
     return fullItem.translations[langCode].name;
   }
@@ -62,15 +67,38 @@ export function getLocalizedField(field: any, language: string, fullItem?: any):
     }
   }
 
-  if (typeof field === "object") {
-    const val = field["English"] || field["en"] || Object.values(field)[0] || "";
-    return String(val);
+  if (typeof field === "object" && field !== null) {
+    const directValue =
+      field[language] ||
+      field[langCode || ""] ||
+      field["English"] ||
+      field["en"] ||
+      field["Russian"] ||
+      field["ru"] ||
+      field["German"] ||
+      field["de"] ||
+      field["Spanish"] ||
+      field["es"] ||
+      field["Kazakh"] ||
+      field["kk"] ||
+      field["Hebrew"] ||
+      field["he"] ||
+      field["Japanese"] ||
+      field["ja"] ||
+      field["Korean"] ||
+      field["ko"] ||
+      Object.values(field).find((value) => typeof value === "string" && value.trim());
+
+    if (directValue !== undefined && directValue !== null && String(directValue).trim()) {
+      return String(directValue);
+    }
   }
 
   if (typeof field === "string") {
     return field;
   }
-  return String(field);
+
+  return String(field ?? "");
 }
 
 export interface PriceOption {
