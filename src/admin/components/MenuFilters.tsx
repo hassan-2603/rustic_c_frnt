@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCategories } from "../services/categoryService";
+import { getLocalizedField } from "../../types";
 
 type Props = {
   selectedCategory: string;
@@ -34,11 +35,8 @@ export default function MenuFilters({
         <option value="All">All Categories</option>
 
         {categories.map((cat) => (
-          <option
-            key={cat.id}
-            value={cat.name}
-          >
-            {cat.name}
+          <option key={cat.id} value={getLocalizedField(cat.name, "English")}>
+            {getLocalizedField(cat.name, "English")}
           </option>
         ))}
       </select>

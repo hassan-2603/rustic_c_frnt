@@ -4,6 +4,7 @@ import {
   addCategory,
   updateCategory,
 } from "../services/categoryService";
+import { getLocalizedField } from "../../types";
 
 type Props = {
   open: boolean;
@@ -26,7 +27,7 @@ export default function CategoryDrawer({
   useEffect(() => {
     if (item) {
       setForm({
-        name: item.name || "",
+        name: getLocalizedField(item.name, "English"),
         isActive: item.isActive ?? true,
       });
     } else {

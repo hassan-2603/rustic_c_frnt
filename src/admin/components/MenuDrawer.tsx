@@ -272,8 +272,8 @@ export default function MenuDrawer({
                 className="w-full mt-2 border rounded-xl p-3"
               >
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
-                    {cat.name}
+                  <option key={cat.id} value={getLocalizedField(cat.name, "English")}>
+                    {getLocalizedField(cat.name, "English")}
                   </option>
                 ))}
               </select>

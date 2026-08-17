@@ -73,10 +73,6 @@ async function executeAdminRequest(path: string, options: RequestInit = {}) {
     // ignore
   }
 
-  if (API_BASE_URL) {
-    url = `${API_BASE_URL}/api/admin${path}`;
-  }
-
   return fetch(url, {
     ...options,
     headers,
@@ -110,9 +106,11 @@ async function fetchAdminJson(path: string, options: RequestInit = {}) {
         "Content-Type": "application/json",
         ...options.headers,
         Authorization: `Bearer ${LOCAL_BACKEND_ADMIN_TOKEN}`,
+        "x-admin-token": LOCAL_BACKEND_ADMIN_TOKEN,
       };
       localStorage.setItem("adminToken", LOCAL_BACKEND_ADMIN_TOKEN);
-      response = await fetch(`${API_BASE}${path}`, {
+      const fallbackUrl = `${API_BASE}${path}${path.includes("?") ? "&" : "?"}adminToken=${encodeURIComponent(LOCAL_BACKEND_ADMIN_TOKEN)}`;
+      response = await fetch(fallbackUrl, {
         ...options,
         headers: fallbackHeaders,
       });

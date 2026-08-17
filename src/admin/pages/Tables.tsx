@@ -7,7 +7,6 @@ import TableDetailsDrawer from "../components/TableDetailsDrawer";
 
 import { createTable, listenTables } from "../services/tableService";
 import { DEFAULT_TABLE_AREAS, getAreaLabel } from "../../utils/tableUtils";
-import { generateTables } from "../../generateTables";
 
 export default function Tables() {
   const [tables, setTables] = useState<any[]>([]);
@@ -34,12 +33,6 @@ export default function Tables() {
   }, []);
 
   const [tablesError, setTablesError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (tables.length === 0 && !tablesError) {
-      generateTables();
-    }
-  }, [tables, tablesError]);
 
   console.log("TABLES:", tables);
 

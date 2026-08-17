@@ -65,7 +65,7 @@ export default function MenuTable({
                 {getLocalizedField(item.name, "English")}
               </td>
 
-              <td>{item.category}</td>
+              <td>{getLocalizedField(item.category, "English")}</td>
 
               <td>{getMenuPriceLabel(item)}</td>
 

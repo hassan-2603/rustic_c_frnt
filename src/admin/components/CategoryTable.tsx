@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from "lucide-react";
+import { getLocalizedField } from "../../types";
 
 type Props = {
   categories: any[];
@@ -46,7 +47,7 @@ export default function CategoryTable({
             >
 
               <td className="p-5 font-medium">
-                {category.name}
+                {getLocalizedField(category.name, "English")}
               </td>
 
               <td className="p-5">
