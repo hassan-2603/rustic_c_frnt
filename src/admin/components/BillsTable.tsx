@@ -1,11 +1,19 @@
 import { Printer } from "lucide-react";
+import { printBillThroughConnector } from "../services/printerService";
 
 type Props = {
   orders: any[];
 };
 
 export default function BillsTable({ orders }: Props) {
-  function printBill(order: any) {
+  async function printBill(order: any) {
+    try {
+      await printBillThroughConnector(order);
+      return;
+    } catch (error) {
+      console.warn("Print connector unavailable; opening browser print dialog.", error);
+    }
+
     const itemsHtml = order.items
       ?.map(
         (item: any) => `

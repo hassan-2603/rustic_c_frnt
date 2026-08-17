@@ -9,6 +9,7 @@ import {
   Percent,
 } from "lucide-react";
 import { updateOrderDiscount } from "../services/orderService";
+import { printBillThroughConnector } from "../services/printerService";
 
 import StatusBadge from "./StatusBadge";
 
@@ -103,7 +104,14 @@ export default function OrderDetailsDrawer({
     }
   }
 
-  function handlePrint() {
+  async function handlePrint() {
+    try {
+      await printBillThroughConnector(order);
+      return;
+    } catch (error) {
+      console.warn("Print connector unavailable; opening browser print dialog.", error);
+    }
+
     const itemsHtml = order.items
       ?.map(
         (item: any) => `
