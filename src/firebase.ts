@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { browserLocalPersistence, initializeAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -13,7 +13,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
+// Use localStorage persistence so auth startup does not depend on IndexedDB availability.
+export const auth = initializeAuth(app, {
+  persistence: browserLocalPersistence,
+});
 export const storage = getStorage(app);
 
 export default app;
