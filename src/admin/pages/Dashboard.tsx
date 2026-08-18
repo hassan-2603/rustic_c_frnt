@@ -3,11 +3,14 @@ import StatCard from "../components/StatCard";
 import { listenToOrders } from "../services/orderApi";
 import { listenToTables } from "../services/tableApi";
 import { listenToWaiterCalls } from "../services/waiterApi";
+import { getCaptainName, saveCaptainName } from "../services/printerService";
 
 
 export default function Dashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [tables, setTables] = useState<any[]>([]);
+  const [captainName, setCaptainName] = useState(getCaptainName);
+  const [captainMessage, setCaptainMessage] = useState("");
 
   useEffect(() => {
   const unsubscribeOrders = listenToOrders(setOrders);
@@ -40,11 +43,38 @@ return () => {
   (call) => call.status === "pending"
 ).length;
 
+  function handleSaveCaptain() {
+    saveCaptainName(captainName);
+    setCaptainName(getCaptainName());
+    setCaptainMessage("Captain name saved.");
+  }
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-8">
         Dashboard
       </h1>
+
+      <div className="bg-white rounded-2xl shadow-sm border p-5 mb-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <label className="flex-1 text-sm font-semibold">
+            Captain Name
+            <input
+              value={captainName}
+              onChange={(event) => {
+                setCaptainName(event.target.value);
+                setCaptainMessage("");
+              }}
+              className="mt-1 w-full border rounded-lg px-3 py-2 font-normal"
+              placeholder="Enter captain name"
+            />
+          </label>
+          <button onClick={handleSaveCaptain} className="bg-olive text-white px-5 py-2 rounded-xl font-semibold">
+            Save
+          </button>
+          {captainMessage && <span className="text-sm text-green-700">{captainMessage}</span>}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
 

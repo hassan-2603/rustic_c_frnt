@@ -16,8 +16,35 @@ export const DEFAULT_PRINTER_SETTINGS: PrinterSettings = {
   autoCut: true,
 };
 
+export const BILL_PRINTER_SETTINGS: PrinterSettings = {
+  printerName: "80 Printer",
+  connectionType: "network",
+  ipAddress: "192.168.0.20",
+  port: 9100,
+  paperWidth: "80mm",
+  autoCut: true,
+};
+
+export const KOT_PRINTER_SETTINGS: PrinterSettings = {
+  printerName: "KOT",
+  connectionType: "network",
+  ipAddress: "192.168.0.10",
+  port: 9100,
+  paperWidth: "80mm",
+  autoCut: true,
+};
+
 const STORAGE_KEY = "rustic_charm_printer_settings";
+const CAPTAIN_NAME_KEY = "rustic_charm_captain_name";
 const CONNECTOR_URL = "http://127.0.0.1:17890";
+
+export function getCaptainName() {
+  return localStorage.getItem(CAPTAIN_NAME_KEY) || "";
+}
+
+export function saveCaptainName(name: string) {
+  localStorage.setItem(CAPTAIN_NAME_KEY, name.trim());
+}
 
 export function getPrinterSettings(): PrinterSettings {
   try {
@@ -35,11 +62,13 @@ export function savePrinterSettings(settings: PrinterSettings) {
 function toPrintBill(order: any) {
   return {
     orderNumber: order.orderNumber,
-    waiterName: order.waiterName,
+    tableNumber: order.tableLabel || order.tableReference || order.tableNumber,
+    captainName: getCaptainName(),
     date: (order.createdAt?.toDate?.() || new Date()).toLocaleString(),
     items: (order.items || []).map((item: any) => ({
       name: item.name,
       quantity: item.quantity,
+      price: Number(item.price || 0),
       amount: item.price * item.quantity,
     })),
     total: order.total,
@@ -65,7 +94,26 @@ export async function testPrinter(settings: PrinterSettings) {
 
 export async function printBillThroughConnector(order: any) {
   return connectorRequest("/print", {
-    settings: getPrinterSettings(),
+    settings: BILL_PRINTER_SETTINGS,
+    printType: "bill",
     bill: toPrintBill(order),
+  });
+}
+
+export async function printKOTThroughConnector(order: any) {
+  return connectorRequest("/print", {
+    settings: KOT_PRINTER_SETTINGS,
+    printType: "kot",
+    kot: {
+      orderNumber: order.orderNumber,
+      tableNumber: order.tableLabel || order.tableReference || order.tableNumber,
+      captainName: getCaptainName(),
+      date: (order.createdAt?.toDate?.() || new Date()).toLocaleString(),
+      items: (order.items || []).map((item: any) => ({
+        name: item.name,
+        category: item.category,
+        quantity: item.quantity,
+      })),
+    },
   });
 }

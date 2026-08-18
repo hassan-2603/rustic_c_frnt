@@ -26,6 +26,7 @@ const links = [
   { icon: Armchair, label: "Tables", to: "/admin/tables" },
   { icon: Tag, label: "Offers", to: "/admin/offers" },
   { icon: Settings, label: "Settings", to: "/admin/settings" },
+  { icon: Receipt, label: "KOT", to: "/admin/kot" },
 ];
 
 export default function Sidebar() {

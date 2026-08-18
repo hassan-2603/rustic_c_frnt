@@ -18,6 +18,7 @@ import Tables from "./pages/Tables";
 import Settings from "./pages/Settings";
 import Categories from "./pages/Category";
 import Offers from "./pages/Offers";
+import KOT from "./pages/KOT";
 
 export default function AdminApp() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -93,6 +94,7 @@ export default function AdminApp() {
         <Route path="bills" element={<Bills />} />
         <Route path="tables" element={<Tables />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="kot" element={<KOT />} />
         <Route path="categories" element={<Categories />} />
         <Route path="offers" element={<Offers />} />
       </Route>
