@@ -43,8 +43,9 @@ export function exportOrdersExcel(orders: any[]) {
         ?.map((item: any) => {
           const name =
             typeof item.name === "object" ? item.name.English || Object.values(item.name)[0] : item.name;
+          const category = item.category ? ` (${item.category})` : "";
           const note = item.specialInstructions ? ` (${item.specialInstructions})` : "";
-          return `${item.quantity} × ${name}${note}`;
+          return `${item.quantity} × ${name}${category}${note}`;
         })
         .join("\n") || "";
 

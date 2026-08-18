@@ -18,11 +18,11 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
       proxy: {
         '/api': {
-          target: 'https://rustic-c-bck.onrender.com',
+          target: process.env.VITE_API_BASE_URL || 'http://localhost:5000',
           changeOrigin: true,
         },
         '/images': {
-          target: 'https://rustic-c-bck.onrender.com',
+          target: process.env.VITE_API_BASE_URL || 'http://localhost:5000',
           changeOrigin: true,
         },
       },
