@@ -9,7 +9,7 @@ import {
   Percent,
 } from "lucide-react";
 import { updateOrderDiscount } from "../services/orderService";
-import { printBillThroughConnector, getCaptainName } from "../services/printerService";
+import { printBillThroughConnector } from "../services/printerService";
 
 import StatusBadge from "./StatusBadge";
 
@@ -204,8 +204,6 @@ export default function OrderDetailsDrawer({
 
       <p><b>Waiter:</b> ${order.waiterName}</p>
 
-      <p><b>Captain:</b> ${getCaptainName()}</p>
-
       <p><b>Date:</b> ${created.toLocaleString()}</p>
 
       <table>
@@ -233,11 +231,6 @@ export default function OrderDetailsDrawer({
       </table>
 
       ${discountSectionHtml}
-
-      <p style="margin-top:15px;">
-        <b>Payment Method:</b>
-        ${order.paymentMethod || "-"}
-      </p>
 
     </body>
 
