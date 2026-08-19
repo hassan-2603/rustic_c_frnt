@@ -1,5 +1,5 @@
 import { Printer } from "lucide-react";
-import { printBillThroughConnector } from "../services/printerService";
+import { printBillThroughConnector, getCaptainName } from "../services/printerService";
 
 type Props = {
   orders: any[];
@@ -101,6 +101,8 @@ export default function BillsTable({ orders }: Props) {
         <p><b>Order:</b> ${order.orderNumber}</p>
 
         <p><b>Waiter:</b> ${order.waiterName}</p>
+
+        <p><b>Captain:</b> ${getCaptainName()}</p>
 
         <p><b>Date:</b> ${new Date(
           order.createdAt.seconds * 1000

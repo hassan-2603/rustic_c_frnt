@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 
 import BillStatusBadge from "./BillStatusBadge";
 import { markPaid } from "../services/billService";
+import { getCaptainName } from "../services/printerService";
 
 type Props = {
   open:boolean;
@@ -108,6 +109,16 @@ Qty {item.quantity}
 
 <span>
 {bill.waiterName}
+</span>
+
+</div>
+
+<div className="flex justify-between">
+
+<span>Captain</span>
+
+<span>
+{getCaptainName() || "--"}
 </span>
 
 </div>
