@@ -9,7 +9,9 @@ export function listenKitchenOrders(callback: (orders: any[]) => void) {
     try {
       const data = await requestAdminJson("/orders");
       const orders = Array.isArray(data)
-        ? data.filter((order: any) => ["Accepted", "Preparing", "Ready"].includes(order.status))
+        ? data.filter((order: any) => order.orderSource === "admin"
+          ? order.status === "Accepted"
+          : ["Accepted", "Preparing", "Ready"].includes(order.status))
         : [];
       if (active) callback(orders);
     } catch (error) {

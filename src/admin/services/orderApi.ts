@@ -44,6 +44,18 @@ export async function updateOrder(id: string, updates: any) {
   });
 }
 
+export async function createAdminOrder(order: {
+  tableId: string;
+  waiterId: string;
+  items: Array<{ menuItemId: string; name: string; quantity: number; price: number }>;
+  total: number;
+}) {
+  return requestAdminJson(`${BASE}`, {
+    method: "POST",
+    body: JSON.stringify(order),
+  });
+}
+
 export async function updateOrderDiscount(orderId: string, discountData: any) {
   return await updateOrder(orderId, discountData);
 }

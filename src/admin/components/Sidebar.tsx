@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Tag,
+  ClipboardPlus,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -27,6 +28,7 @@ const links = [
   { icon: Tag, label: "Offers", to: "/admin/offers" },
   { icon: Settings, label: "Settings", to: "/admin/settings" },
   { icon: Receipt, label: "KOT", to: "/admin/kot" },
+  { icon: ClipboardPlus, label: "Order by Admin", to: "/admin/order-by-admin" },
 ];
 
 export default function Sidebar() {

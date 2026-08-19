@@ -19,6 +19,7 @@ import Settings from "./pages/Settings";
 import Categories from "./pages/Category";
 import Offers from "./pages/Offers";
 import KOT from "./pages/KOT";
+import OrderByAdmin from "./pages/OrderByAdmin";
 
 export default function AdminApp() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -95,6 +96,7 @@ export default function AdminApp() {
         <Route path="tables" element={<Tables />} />
         <Route path="settings" element={<Settings />} />
         <Route path="kot" element={<KOT />} />
+        <Route path="order-by-admin" element={<OrderByAdmin />} />
         <Route path="categories" element={<Categories />} />
         <Route path="offers" element={<Offers />} />
       </Route>

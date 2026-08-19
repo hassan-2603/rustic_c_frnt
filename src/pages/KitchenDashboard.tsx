@@ -295,7 +295,16 @@ export default function KitchenDashboard({ onLogout }: KitchenDashboardProps = {
                     </div>
                     <div className="mt-5">
 
-                      {order.status === "Accepted" && (
+                      {order.orderSource === "admin" && order.status === "Accepted" && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, "Completed", { completedAt: new Date().toISOString() })}
+                          className="w-full sm:w-auto bg-olive hover:bg-olive/90 text-white px-5 py-3 rounded-xl font-semibold shadow-md"
+                        >
+                          Complete
+                        </button>
+                      )}
+
+                      {order.orderSource !== "admin" && order.status === "Accepted" && (
                         <button
                           onClick={() => updateOrderStatus(order.id, "Preparing")}
                           className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold shadow-md"
