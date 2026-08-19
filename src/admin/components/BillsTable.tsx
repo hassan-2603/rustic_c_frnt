@@ -102,8 +102,6 @@ export default function BillsTable({ orders }: Props) {
 
         <p style="text-align:center; margin:0;">RESTRO BAR AND CAFE BY DAAOM</p>
 
-        <p style="text-align:center; margin:0 0 12px;">RUSTIC CHARM</p>
-
         <p>Order: ${order.orderNumber}</p>
 
         <p>Waiter: ${order.waiterName}</p>
