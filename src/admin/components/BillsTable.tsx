@@ -66,6 +66,7 @@ export default function BillsTable({ orders }: Props) {
           h2{
             text-align:center;
             margin-bottom:4px;
+            font-weight:normal;
           }
 
           p{
@@ -81,12 +82,13 @@ export default function BillsTable({ orders }: Props) {
           th,td{
             padding:8px;
             border-bottom:1px dashed #999;
+            font-weight:normal;
           }
 
           .total{
             margin-top:20px;
             font-size:20px;
-            font-weight:bold;
+            font-weight:normal;
             text-align:right;
           }
 
@@ -96,13 +98,17 @@ export default function BillsTable({ orders }: Props) {
 
       <body>
 
-        <h2>Rustic Charm</h2>
+        <h2>RUSTIC CHARM</h2>
 
-        <p><b>Order:</b> ${order.orderNumber}</p>
+        <p style="text-align:center; margin:0;">RESTRO BAR AND CAFE BY DAAOM</p>
 
-        <p><b>Waiter:</b> ${order.waiterName}</p>
+        <p style="text-align:center; margin:0 0 12px;">RUSTIC CHARM</p>
 
-        <p><b>Date:</b> ${new Date(
+        <p>Order: ${order.orderNumber}</p>
+
+        <p>Waiter: ${order.waiterName}</p>
+
+        <p>Date: ${new Date(
           order.createdAt.seconds * 1000
         ).toLocaleString()}</p>
 

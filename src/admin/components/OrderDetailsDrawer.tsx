@@ -166,6 +166,7 @@ export default function OrderDetailsDrawer({
 
         h2{
           text-align:center;
+          font-weight:normal;
         }
 
         table{
@@ -177,13 +178,14 @@ export default function OrderDetailsDrawer({
         th,td{
           border-bottom:1px dashed #999;
           padding:8px;
+          font-weight:normal;
         }
 
         .total{
           text-align:right;
           margin-top:20px;
           font-size:20px;
-          font-weight:bold;
+          font-weight:normal;
         }
 
       </style>
@@ -192,19 +194,23 @@ export default function OrderDetailsDrawer({
 
     <body>
 
-      <h2>Rustic Charm</h2>
+      <h2>RUSTIC CHARM</h2>
 
-      <p><b>Order:</b> ${order.orderNumber}</p>
+      <p style="text-align:center; margin:0;">RESTRO BAR AND CAFE BY DAAOM</p>
 
-      <p><b>Table:</b> ${order.tableLabel || order.tableReference || `Table ${order.tableNumber || "--"}`}</p>
+      <p style="text-align:center; margin:0 0 12px;">RUSTIC CHARM</p>
 
-      <p><b>Customer Name:</b> ${order.customerName || ""}</p>
+      <p>Order: ${order.orderNumber}</p>
 
-      <p><b>Customer Phone:</b> ${order.customerPhone || ""}</p>
+      <p>Table: ${order.tableLabel || order.tableReference || `Table ${order.tableNumber || "--"}`}</p>
 
-      <p><b>Waiter:</b> ${order.waiterName}</p>
+      <p>Customer Name: ${order.customerName || ""}</p>
 
-      <p><b>Date:</b> ${created.toLocaleString()}</p>
+      <p>Customer Phone: ${order.customerPhone || ""}</p>
+
+      <p>Waiter: ${order.waiterName}</p>
+
+      <p>Date: ${created.toLocaleString()}</p>
 
       <table>
 
