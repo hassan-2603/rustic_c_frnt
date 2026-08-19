@@ -63,6 +63,8 @@ function toPrintBill(order: any) {
   return {
     orderNumber: order.orderNumber,
     tableNumber: order.tableLabel || order.tableReference || order.tableNumber,
+    customerName: order.customerName,
+    customerPhone: order.customerPhone,
     waiterName: order.waiterName,
     date: (order.createdAt?.toDate?.() || new Date()).toLocaleString(),
     items: (order.items || []).map((item: any) => ({
