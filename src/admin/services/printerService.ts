@@ -113,7 +113,6 @@ export async function printKOTThroughConnector(order: any) {
       date: (order.createdAt?.toDate?.() || new Date()).toLocaleString(),
       items: (order.items || []).map((item: any) => ({
         name: item.name,
-        category: item.category,
         quantity: item.quantity,
       })),
     },

@@ -48,7 +48,7 @@ export default function KOT() {
               {(order.items || []).map((item: any, index: number) => (
                 <div key={`${order.id}-${index}`} className="flex gap-3">
                   <span className="font-semibold">{item.quantity}x</span>
-                  <span>{item.name}{item.category ? ` (${item.category})` : ""}</span>
+                  <span>{item.name}</span>
                 </div>
               ))}
             </div>
