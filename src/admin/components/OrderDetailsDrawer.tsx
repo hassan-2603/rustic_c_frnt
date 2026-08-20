@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import OrderTimeline from "./OrderTimeline";
 import {
   X,
@@ -8,7 +8,8 @@ import {
   ShoppingBag,
   Percent,
 } from "lucide-react";
-import { updateOrderDiscount } from "../services/orderService";
+import { updateOrder, updateOrderDiscount } from "../services/orderService";
+import { listenTables } from "../services/tableApi";
 import { printBillThroughConnector } from "../services/printerService";
 
 import StatusBadge from "./StatusBadge";
@@ -24,11 +25,15 @@ export default function OrderDetailsDrawer({
   order,
   onClose,
 }: Props) {
-  if (!open || !order) return null;
-
   const [isDiscountFormOpen, setIsDiscountFormOpen] = useState(false);
   const [discountType, setDiscountType] = useState<'percent' | 'flat'>('percent');
   const [discountValue, setDiscountValue] = useState<string>("");
+  const [tables, setTables] = useState<any[]>([]);
+  const [selectedTableId, setSelectedTableId] = useState("");
+  const [savingTable, setSavingTable] = useState(false);
+
+  const areas = useMemo(() => [...new Set(tables.map((table) => table.area))], [tables]);
+  const selectedTable = tables.find((table) => table.id === selectedTableId);
 
   useEffect(() => {
     if (order) {
@@ -37,6 +42,37 @@ export default function OrderDetailsDrawer({
       setIsDiscountFormOpen(!!order.discountAmount);
     }
   }, [order]);
+
+  useEffect(() => {
+    if (!open) return;
+    return listenTables(setTables);
+  }, [open]);
+
+  useEffect(() => {
+    if (order && tables.length > 0) {
+      setSelectedTableId(order.tableId || tables.find((table) => table.tableKey === order.tableReference)?.id || "");
+    }
+  }, [order, tables]);
+
+  if (!open || !order) return null;
+
+  async function handleSaveTable() {
+    if (!selectedTable || selectedTable.id === order.tableId) return;
+    setSavingTable(true);
+    try {
+      await updateOrder(order.id, { tableId: selectedTable.id });
+      order.tableId = selectedTable.id;
+      order.tableReference = selectedTable.tableKey;
+      order.tableNumber = selectedTable.tableNumber;
+      order.tableArea = selectedTable.area;
+      order.tableLabel = selectedTable.displayName;
+      alert("Table updated successfully.");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Unable to update table.");
+    } finally {
+      setSavingTable(false);
+    }
+  }
 
   const created =
     order.createdAt?.toDate?.() || new Date();
@@ -427,6 +463,52 @@ export default function OrderDetailsDrawer({
           </div>
 
           {/* Order Info */}
+
+          <div className="border rounded-2xl p-5">
+
+            <h3 className="font-semibold mb-4">
+              Table Information
+            </h3>
+
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-600">
+                Area
+                <select
+                  value={selectedTable?.area || ""}
+                  onChange={(event) => {
+                    const firstTable = tables.find((table) => table.area === event.target.value);
+                    setSelectedTableId(firstTable?.id || "");
+                  }}
+                  className="mt-1 w-full border rounded-xl px-3 py-2 font-normal text-gray-900"
+                >
+                  <option value="">Select area</option>
+                  {areas.map((area) => <option key={area} value={area}>{tables.find((table) => table.area === area)?.areaLabel || area}</option>)}
+                </select>
+              </label>
+
+              <label className="block text-sm font-medium text-gray-600">
+                Table Number
+                <select
+                  value={selectedTableId}
+                  onChange={(event) => setSelectedTableId(event.target.value)}
+                  className="mt-1 w-full border rounded-xl px-3 py-2 font-normal text-gray-900"
+                >
+                  <option value="">Select table</option>
+                  {tables.filter((table) => !selectedTable?.area || table.area === selectedTable.area).map((table) => <option key={table.id} value={table.id}>{table.tableNumber}</option>)}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={handleSaveTable}
+                disabled={!selectedTable || selectedTable.id === order.tableId || savingTable}
+                className="w-full bg-olive text-white py-2.5 rounded-xl font-semibold disabled:opacity-50"
+              >
+                {savingTable ? "Updating..." : "Update Table"}
+              </button>
+            </div>
+
+          </div>
 
           <div className="border rounded-2xl p-5">
 
