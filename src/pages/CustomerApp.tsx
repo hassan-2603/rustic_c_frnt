@@ -307,9 +307,23 @@ export default function CustomerApp() {
     }
 
     const existing = JSON.parse(localStorage.getItem("rusticSession") || "{}");
+    const sessionTable = existing.sessionId && existing.active
+      ? tables.find((candidate) => candidate.currentSessionId === existing.sessionId)
+      : null;
+    const effectiveTable = sessionTable || matchingTable;
     const sameTableLink = existing.table === tableReference && existing.sessionId;
 
     if (!sameTableLink) {
+      if (sessionTable) {
+        setCurrentTable(sessionTable.tableKey || sessionTable.id);
+        setTableValidationError(null);
+        persistSession({
+          active: existing.active,
+          sessionId: existing.sessionId,
+          table: sessionTable.tableKey || sessionTable.id,
+        });
+        return;
+      }
       resetCustomerState(tableReference);
       const nextSessionId = crypto.randomUUID();
       persistSession({
@@ -320,12 +334,12 @@ export default function CustomerApp() {
       setSessionId(nextSessionId);
       setPage("landing");
     } else {
-      setCurrentTable(tableReference);
+      setCurrentTable(effectiveTable.tableKey || effectiveTable.id || tableReference);
       setTableValidationError(null);
       persistSession({
         active: existing.active ?? false,
         sessionId: existing.sessionId,
-        table: tableReference,
+        table: effectiveTable.tableKey || effectiveTable.id || tableReference,
       });
     }
 
@@ -347,24 +361,31 @@ export default function CustomerApp() {
     if (session.table) {
 
       const requestedTable = session.table;
-      const tableObj = tables.find(
-        (table) => resolveTableFromReference([table], requestedTable)
-      );
+      const tableObj = (session.active && session.sessionId
+        ? tables.find((table) => table.currentSessionId === session.sessionId)
+        : null) || tables.find(
+          (table) => resolveTableFromReference([table], requestedTable)
+        );
 
       console.log("RESTORE TABLE:", requestedTable);
       console.log("TABLE EXISTS:", !!tableObj);
 
       if (tableObj) {
-        setCurrentTable(requestedTable);
+        const nextTableReference = tableObj.tableKey || tableObj.id || requestedTable;
+        setCurrentTable(nextTableReference);
         setTableValidationError(null);
 
         if (
+          tableObj.currentSessionId !== session.sessionId &&
           session.active &&
           tableObj.status === "available" &&
           !tableObj.currentSessionId
         ) {
           console.log("Table was freed by admin, expiring session...");
           expireSession();
+        }
+        if (nextTableReference !== session.table) {
+          persistSession({ table: nextTableReference });
         }
       } else {
         setCurrentTable(null);
@@ -423,7 +444,9 @@ export default function CustomerApp() {
       return;
     }
 
-    const table = tables.find((candidate) => resolveTableFromReference([candidate], session.table));
+    const table = (session.active && session.sessionId
+      ? tables.find((candidate) => candidate.currentSessionId === session.sessionId)
+      : null) || tables.find((candidate) => resolveTableFromReference([candidate], session.table));
 
     if (!table) {
       localStorage.removeItem("rusticSession");
@@ -431,7 +454,8 @@ export default function CustomerApp() {
       return;
     }
 
-    setCurrentTable(session.table);
+    const nextTableReference = table.tableKey || table.id || session.table;
+    setCurrentTable(nextTableReference);
     setSessionId(session.sessionId);
     setCurrentOrderId(session.currentOrderId || "");
     setCurrentOrderNumber(session.currentOrderNumber || "");
@@ -439,6 +463,9 @@ export default function CustomerApp() {
     setCustomerName(session.customerName || "");
     setCustomerPhone(session.customerPhone || "");
     setHasActiveOrder(Boolean(session.active || session.currentOrderId || session.currentOrderNumber));
+    if (nextTableReference !== session.table) {
+      persistSession({ table: nextTableReference });
+    }
 
     const restoredPage = session.currentPage as Page | undefined;
     if (restoredPage) {
